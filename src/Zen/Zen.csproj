@@ -25,4 +25,8 @@
     <PackageReference Include="LLVMSharp" Version="15.0.0-beta1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="Antlr\Zen.g4" />
+  </ItemGroup>
+
 </Project>

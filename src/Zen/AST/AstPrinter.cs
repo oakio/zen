@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Zen.AST.Nodes;
 
 namespace Zen.AST;
@@ -13,6 +14,7 @@ public class AstPrinter : IAstVisitor
     {
         Print(node);
         Begin();
+        AcceptAll(node.Inner);
         End();
     }
 
@@ -26,4 +28,12 @@ public class AstPrinter : IAstVisitor
     private void Begin() => _padding++;
 
     private void End() => _padding--;
+
+    private void AcceptAll(IEnumerable<IAstNode> nodes)
+    {
+        foreach (IAstNode node in nodes)
+        {
+            node.Accept(this);
+        }
+    }
 }
