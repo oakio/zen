@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <Authors>Ilya Dubadenko</Authors>
+    <Description>ZenLang frontend compiler for LLVM</Description>
+    <Copyright>Copyright (c) 2023</Copyright>
+    <PackageProjectUrl>https://github.com/oakio/zen</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/oakio/zen</RepositoryUrl>
+    <AssemblyName>Zen</AssemblyName>
+    <RootNamespace>Zen</RootNamespace>
+    <NoWarn>7035;1591</NoWarn>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Codestellation.Cepheid" Version="0.1.6" PrivateAssets="All" />
+  </ItemGroup>
+
+</Project>
