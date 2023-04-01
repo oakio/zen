@@ -19,6 +19,7 @@ statement
     | call ';'
     | assign
     | varDeclare
+    | ifElse
     ;
 
 declaration
@@ -51,6 +52,10 @@ call
 
 assign
     : ID '=' value=expression ';'
+    ;
+
+ifElse
+    : 'if' '(' condition=expression ')' thenBlock=block ('else' elseBlock=block)?
     ;
 
 TYPE

@@ -173,6 +173,47 @@ public class LLVMCodeGenerator : IAstVisitor
         _builder.BuildStore(value, variable.Value);
     }
 
+    public void Visit(IfNode node)
+    {
+        bool hasElseBlock = node.ElseBody != null;
+        LLVMBasicBlockRef conditionBlock = AppendBasicBlock(_currentBlock, "if");
+        LLVMBasicBlockRef thenBlock = AppendBasicBlock(conditionBlock, "if.then");
+        LLVMBasicBlockRef elseBlock = AppendBasicBlock(thenBlock, "if.else");
+        LLVMBasicBlockRef mergeBlock = hasElseBlock ? AppendBasicBlock(elseBlock, "if.merge") : elseBlock;
+
+        _builder.BuildBr(conditionBlock);
+
+        // emit Condition
+        SetCurrentBlock(conditionBlock);
+        LLVMValueRef condition = Eval(node.Condition);
+        _builder.BuildCondBr(condition, thenBlock, elseBlock);
+
+        // emit Then
+        SetCurrentBlock(thenBlock);
+        _scope.Begin();
+        Accept(node.ThenBody);
+        _scope.End();
+        if (!HasTerminator(thenBlock))
+        {
+            _builder.BuildBr(mergeBlock);
+        }
+
+        // emit Else
+        if (hasElseBlock)
+        {
+            SetCurrentBlock(elseBlock);
+            _scope.Begin();
+            Accept(node.ElseBody);
+            _scope.End();
+            if (!HasTerminator(elseBlock))
+            {
+                _builder.BuildBr(mergeBlock);
+            }
+        }
+
+        SetCurrentBlock(mergeBlock);
+    }
+
     private void DeclareFunction(FuncDeclareNode node)
     {
         LLVMTypeRef returnType = GetLLVMType(node.ReturnType);
