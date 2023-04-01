@@ -299,6 +299,12 @@ public class LLVMCodeGenerator : IAstVisitor
             BinaryOpType.Mul => _builder.BuildMul(left, right),
             BinaryOpType.Div => _builder.BuildSDiv(left, right),
             BinaryOpType.Mod => _builder.BuildSRem(left, right),
+            BinaryOpType.Eq => _builder.BuildICmp(LLVMIntPredicate.LLVMIntEQ, left, right),
+            BinaryOpType.Ne => _builder.BuildICmp(LLVMIntPredicate.LLVMIntNE, left, right),
+            BinaryOpType.Lt => _builder.BuildICmp(LLVMIntPredicate.LLVMIntSLT, left, right),
+            BinaryOpType.Gt => _builder.BuildICmp(LLVMIntPredicate.LLVMIntSGT, left, right),
+            BinaryOpType.Lte => _builder.BuildICmp(LLVMIntPredicate.LLVMIntSLE, left, right),
+            BinaryOpType.Gte => _builder.BuildICmp(LLVMIntPredicate.LLVMIntSGE, left, right),
             _ => throw new NotSupportedException(op.ToString())
         };
 

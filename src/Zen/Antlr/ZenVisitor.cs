@@ -96,6 +96,14 @@ public class ZenVisitor : ZenBaseVisitor<IAstNode>
         return new BinaryOpNode(type, left, right);
     }
 
+    public override IAstNode VisitRelational(ZenParser.RelationalContext context)
+    {
+        BinaryOpType type = ParseBinaryOpType(context.op.Text);
+        IAstNode left = Visit(context.left);
+        IAstNode right = Visit(context.right);
+        return new BinaryOpNode(type, left, right);
+    }
+
     public override IAstNode VisitParentheses(ZenParser.ParenthesesContext context)
     {
         ZenParser.ExpressionContext inner = context.expression();
@@ -140,6 +148,12 @@ public class ZenVisitor : ZenBaseVisitor<IAstNode>
             "*" => BinaryOpType.Mul,
             "/" => BinaryOpType.Div,
             "%" => BinaryOpType.Mod,
+            "==" => BinaryOpType.Eq,
+            "!=" => BinaryOpType.Ne,
+            "<=" => BinaryOpType.Lte,
+            ">=" => BinaryOpType.Gte,
+            "<" => BinaryOpType.Lt,
+            ">" => BinaryOpType.Gt,
             _ => throw new NotSupportedException(type)
         };
 

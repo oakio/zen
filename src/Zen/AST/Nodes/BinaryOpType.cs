@@ -8,4 +8,11 @@ public enum BinaryOpType
     Mul,
     Div,
     Mod,
+
+    Eq,
+    Ne,
+    Gt,
+    Gte,
+    Lt,
+    Lte
 }

@@ -65,4 +65,54 @@ public class BinaryOpTests
         const string code = "i32 main(i32 x, i32 y) { return x + 2 * 3 + x * 3 + (x + y) * 2 - y / 4 + (x + y) % 3; }";
         Runner.Run<int>(code, 2, 8).Should().Be(33);
     }
+
+    [Test]
+    [TestCase("==", 7, 7, true)]
+    [TestCase("==", -7, -7, true)]
+    [TestCase("==", 7, 5, false)]
+
+    [TestCase("!=", 7, 7, false)]
+    [TestCase("!=", -7, -7, false)]
+    [TestCase("!=", 7, 5, true)]
+
+    [TestCase("<=", 7, 5, false)]
+    [TestCase("<=", 5, 7, true)]
+    [TestCase("<=", 5, 5, true)]
+    [TestCase("<=", -7, 5, true)]
+    [TestCase("<=", 7, -5, false)]
+    [TestCase("<=", -7, -5, true)]
+    [TestCase("<=", -5, -7, false)]
+    [TestCase("<=", -5, -5, true)]
+
+    [TestCase(">=", 7, 5, true)]
+    [TestCase(">=", 5, 7, false)]
+    [TestCase(">=", 5, 5, true)]
+    [TestCase(">=", -7, 5, false)]
+    [TestCase(">=", 7, -5, true)]
+    [TestCase(">=", -7, -5, false)]
+    [TestCase(">=", -5, -7, true)]
+    [TestCase(">=", -5, -5, true)]
+
+    [TestCase("<", 7, 5, false)]
+    [TestCase("<", 5, 7, true)]
+    [TestCase("<", 5, 5, false)]
+    [TestCase("<", -7, 5, true)]
+    [TestCase("<", 7, -5, false)]
+    [TestCase("<", -7, -5, true)]
+    [TestCase("<", -5, -7, false)]
+    [TestCase("<", -5, -5, false)]
+
+    [TestCase(">", 7, 5, true)]
+    [TestCase(">", 5, 7, false)]
+    [TestCase(">", 5, 5, false)]
+    [TestCase(">", -7, 5, false)]
+    [TestCase(">", 7, -5, true)]
+    [TestCase(">", -7, -5, false)]
+    [TestCase(">", -5, -7, true)]
+    [TestCase(">", -5, -5, false)]
+    public void Relation_i32_i32_test(string op, int a, int b, bool expected)
+    {
+        string code = $"i32 main(i32 a, i32 b) {{ return a {op} b ? 5 : 3; }}";
+        Runner.Run<int>(code, a, b).Should().Be(expected ? 5 : 3); //TODO: casting is not implemented yet
+    }
 }
