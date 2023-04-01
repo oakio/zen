@@ -80,6 +80,12 @@ public class ZenVisitor : ZenBaseVisitor<IAstNode>
         return new BinaryOpNode(type, left, right);
     }
 
+    public override IAstNode VisitParentheses(ZenParser.ParenthesesContext context)
+    {
+        ZenParser.ExpressionContext inner = context.expression();
+        return Visit(inner);
+    }
+
     private static BinaryOpType ParseBinaryOpType(string type) =>
         type switch
         {

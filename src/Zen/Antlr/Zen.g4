@@ -7,6 +7,7 @@ module
 expression
     : INTEGER                                           # IntegerLiteral
     | ID                                                # Id
+    | '(' expression ')'                                # Parentheses
     | left=expression op=('*'|'/'|'%') right=expression # Multiplication
     | left=expression op=('+'|'-') right=expression     # Addition
     ;
@@ -51,4 +52,8 @@ INTEGER
 
 WS
     : [ \r\n\t] -> skip
+    ;
+
+COMMENT
+    : '//' ~[\r\n]* -> skip
     ;
