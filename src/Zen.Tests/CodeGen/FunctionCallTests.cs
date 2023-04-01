@@ -36,4 +36,17 @@ i32 defined_below() { return 1; }
 
         Runner.Run<int>(code).Should().Be(1);
     }
+
+    [Test]
+    public void Recursion_test()
+    {
+        const string code = @"
+i32 main(i32 n) {
+    if (n == 0) { return 0; }
+    if (n == 1) { return 1; }
+    return main(n - 1) + main(n - 2);
+}";
+
+        Runner.Run<int>(code, 12).Should().Be(144);
+    }
 }
