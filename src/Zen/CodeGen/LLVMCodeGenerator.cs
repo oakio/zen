@@ -150,6 +150,13 @@ public class LLVMCodeGenerator : IAstVisitor
         _stack.Push(result);
     }
 
+    public void Visit(AssignNode node)
+    {
+        Entity variable = _scope[node.Id];
+        LLVMValueRef value = Eval(node.Value);
+        _builder.BuildStore(value, variable.Value);
+    }
+
     private void DeclareFunction(FuncDeclareNode node)
     {
         LLVMTypeRef returnType = GetLLVMType(node.ReturnType);

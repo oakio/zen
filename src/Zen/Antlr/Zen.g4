@@ -16,6 +16,7 @@ expression
 statement
     : return
     | call ';'
+    | assign
     ;
 
 declaration
