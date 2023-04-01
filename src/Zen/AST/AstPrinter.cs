@@ -60,6 +60,14 @@ public class AstPrinter : IAstVisitor
         End();
     }
 
+    public void Visit(CallNode node)
+    {
+        Print(node);
+        Begin();
+        AcceptAll(node.Args);
+        End();
+    }
+
     private void Print(IAstNode node)
     {
         string pad = new string(' ', _padding * 4); // TODO: cache

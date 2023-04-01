@@ -86,6 +86,13 @@ public class ZenVisitor : ZenBaseVisitor<IAstNode>
         return Visit(inner);
     }
 
+    public override IAstNode VisitCall(ZenParser.CallContext context)
+    {
+        string id = AsId(context.ID());
+        IAstNode[] args = context.expression().Select(Visit).ToArray();
+        return new CallNode(id, args);
+    }
+
     private static BinaryOpType ParseBinaryOpType(string type) =>
         type switch
         {

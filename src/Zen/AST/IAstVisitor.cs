@@ -13,4 +13,5 @@ public interface IAstVisitor
     void Visit(IntegerLiteralNode node);
     void Visit(BlockNode node);
     void Visit(BinaryOpNode node);
+    void Visit(CallNode node);
 }

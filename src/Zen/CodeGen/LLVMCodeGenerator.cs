@@ -135,6 +135,21 @@ public class LLVMCodeGenerator : IAstVisitor
         _stack.Push(result);
     }
 
+    public void Visit(CallNode node)
+    {
+        Entity callee = _functions[node.Id];
+
+        int argsCount = node.Args.Length;
+        var args = new LLVMValueRef[argsCount];
+        for (int i = 0; i < argsCount; i++)
+        {
+            args[i] = Eval(node.Args[i]);
+        }
+
+        LLVMValueRef result = _builder.BuildCall2(callee.Type, callee.Value, args);
+        _stack.Push(result);
+    }
+
     private void DeclareFunction(FuncDeclareNode node)
     {
         LLVMTypeRef returnType = GetLLVMType(node.ReturnType);

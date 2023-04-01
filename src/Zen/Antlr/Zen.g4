@@ -7,6 +7,7 @@ module
 expression
     : INTEGER                                           # IntegerLiteral
     | ID                                                # Id
+    | call                                              # FunctionCall
     | '(' expression ')'                                # Parentheses
     | left=expression op=('*'|'/'|'%') right=expression # Multiplication
     | left=expression op=('+'|'-') right=expression     # Addition
@@ -14,6 +15,7 @@ expression
 
 statement
     : return
+    | call ';'
     ;
 
 declaration
@@ -35,6 +37,14 @@ block
 
 return
     : 'return' expression? ';'
+    ;
+
+call
+    : ID '(' expression? (',' expression)* ')'
+    ;
+
+assign
+    : ID '=' value=expression ';'
     ;
 
 TYPE
