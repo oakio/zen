@@ -67,6 +67,13 @@ public class ZenVisitor : ZenBaseVisitor<IAstNode>
         return new IntegerLiteralNode(value);
     }
 
+    public override IAstNode VisitBoolLiteral(ZenParser.BoolLiteralContext context)
+    {
+        string literal = context.GetText();
+        bool value = bool.Parse(literal);
+        return new BooleanLiteralNode(value);
+    }
+
     public override IAstNode VisitBlock(ZenParser.BlockContext context)
     {
         IAstNode[] nodes = context.statement().Select(Visit).ToArray();

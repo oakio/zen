@@ -129,6 +129,12 @@ public class LLVMCodeGenerator : IAstVisitor
         _stack.Push(value);
     }
 
+    public void Visit(BooleanLiteralNode node)
+    {
+        LLVMValueRef value = LLVMValueRef.CreateConstInt(LLVMTypeRef.Int1, node.Value ? 1u : 0u);
+        _stack.Push(value);
+    }
+
     public void Visit(BlockNode node)
     {
         _scope.Begin();
@@ -207,6 +213,7 @@ public class LLVMCodeGenerator : IAstVisitor
         {
             "void" => _context.VoidType,
             "i32" => _context.Int32Type,
+            "bool" => _context.Int1Type,
             _ => throw new NotSupportedException(type)
         };
 

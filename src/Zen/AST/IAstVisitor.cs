@@ -12,6 +12,7 @@ public interface IAstVisitor
     void Visit(ReturnVoidNode node);
     void Visit(IdNode node);
     void Visit(IntegerLiteralNode node);
+    void Visit(BooleanLiteralNode node);
     void Visit(BlockNode node);
     void Visit(BinaryOpNode node);
     void Visit(CallNode node);

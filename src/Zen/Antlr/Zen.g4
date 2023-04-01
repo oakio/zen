@@ -6,6 +6,7 @@ module
 
 expression
     : INTEGER                                           # IntegerLiteral
+    | ('true'|'false')                                  # BoolLiteral
     | ID                                                # Id
     | call                                              # FunctionCall
     | '(' expression ')'                                # Parentheses
@@ -55,6 +56,7 @@ assign
 TYPE
     : 'i32'
     | 'void'
+    | 'bool'
     ;
 
 ID
