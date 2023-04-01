@@ -12,6 +12,7 @@ expression
     | '(' expression ')'                                # Parentheses
     | left=expression op=('*'|'/'|'%') right=expression # Multiplication
     | left=expression op=('+'|'-') right=expression     # Addition
+    | condition=expression '?' thenValue=expression ':' elseValue=expression    # Ternary
     ;
 
 statement

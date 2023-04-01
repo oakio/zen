@@ -96,6 +96,16 @@ public class AstPrinter : IAstVisitor
         End();
     }
 
+    public void Visit(TernaryOpNode node)
+    {
+        Print(node);
+        Begin();
+        node.Condition.Accept(this);
+        node.ThenBody.Accept(this);
+        node.ElseBody.Accept(this);
+        End();
+    }
+
     private void Print(IAstNode node)
     {
         string pad = new string(' ', _padding * 4); // TODO: cache

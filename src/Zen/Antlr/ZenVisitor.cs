@@ -124,6 +124,14 @@ public class ZenVisitor : ZenBaseVisitor<IAstNode>
         return new IfNode(condition, thenBody, elseBody);
     }
 
+    public override IAstNode VisitTernary(ZenParser.TernaryContext context)
+    {
+        IAstNode condition = Visit(context.condition);
+        IAstNode thenValue = Visit(context.thenValue);
+        IAstNode elseValue = Visit(context.elseValue);
+        return new TernaryOpNode(condition, thenValue, elseValue);
+    }
+
     private static BinaryOpType ParseBinaryOpType(string type) =>
         type switch
         {

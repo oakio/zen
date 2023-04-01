@@ -214,6 +214,39 @@ public class LLVMCodeGenerator : IAstVisitor
         SetCurrentBlock(mergeBlock);
     }
 
+    public void Visit(TernaryOpNode node)
+    {
+        LLVMBasicBlockRef conditionBlock = AppendBasicBlock(_currentBlock, "if");
+        LLVMBasicBlockRef thenBlock = AppendBasicBlock(conditionBlock, "if.then");
+        LLVMBasicBlockRef elseBlock = AppendBasicBlock(thenBlock, "if.else");
+        LLVMBasicBlockRef mergeBlock = AppendBasicBlock(elseBlock, "if.merge");
+
+        _builder.BuildBr(conditionBlock);
+
+        // emit Condition
+        SetCurrentBlock(conditionBlock);
+        LLVMValueRef condition = Eval(node.Condition);
+        _builder.BuildCondBr(condition, thenBlock, elseBlock);
+
+        // emit Then
+        SetCurrentBlock(thenBlock);
+        Accept(node.ThenBody);
+        LLVMValueRef thenValue = _stack.Pop();
+        _builder.BuildBr(mergeBlock);
+
+        // emit Else
+        SetCurrentBlock(elseBlock);
+        Accept(node.ElseBody);
+        LLVMValueRef elseValue = _stack.Pop();
+        _builder.BuildBr(mergeBlock);
+
+        SetCurrentBlock(mergeBlock);
+        LLVMValueRef phiValue = _builder.BuildPhi(thenValue.TypeOf);
+        phiValue.AddIncoming(new[] { thenValue }, new[] { thenBlock }, 1);
+        phiValue.AddIncoming(new[] { elseValue }, new[] { elseBlock }, 1);
+        _stack.Push(phiValue);
+    }
+
     private void DeclareFunction(FuncDeclareNode node)
     {
         LLVMTypeRef returnType = GetLLVMType(node.ReturnType);
