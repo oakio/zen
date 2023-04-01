@@ -15,6 +15,15 @@ public class ZenVisitor : ZenBaseVisitor<IAstNode>
         return new ModuleDeclareNode(moduleName, inner);
     }
 
+    public override IAstNode VisitVarDeclare(ZenParser.VarDeclareContext context)
+    {
+        string type = AsType(context.TYPE());
+        string id = AsId(context.ID());
+        ZenParser.ExpressionContext valueExpression = context.expression();
+        IAstNode value = Visit(valueExpression);
+        return new VarDeclareNode(type, id, value);
+    }
+
     public override IAstNode VisitFuncDeclare(ZenParser.FuncDeclareContext context)
     {
         string id = AsId(context.ID());

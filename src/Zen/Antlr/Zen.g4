@@ -17,11 +17,15 @@ statement
     : return
     | call ';'
     | assign
+    | varDeclare
     ;
 
 declaration
     : funcDeclare
     ;
+
+varDeclare
+    : TYPE ID '=' expression ';';
 
 funcDeclare
     : TYPE ID '(' param? (',' param)* ')' ';'

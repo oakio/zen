@@ -40,6 +40,16 @@ public class LLVMCodeGenerator : IAstVisitor
         _scope.End();
     }
 
+    public void Visit(VarDeclareNode node)
+    {
+        string id = node.Id;
+        LLVMTypeRef type = GetLLVMType(node.Type);
+        LLVMValueRef variable = _builder.BuildAlloca(type, id);
+        LLVMValueRef value = Eval(node.Value);
+        _builder.BuildStore(value, variable);
+        _scope.Add(id, variable, type);
+    }
+
     public void Visit(FuncDeclareNode node)
     {
         Entity func = _functions[node.Id];

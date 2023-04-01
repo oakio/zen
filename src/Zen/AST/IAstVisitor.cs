@@ -5,6 +5,7 @@ namespace Zen.AST;
 public interface IAstVisitor
 {
     void Visit(ModuleDeclareNode node);
+    void Visit(VarDeclareNode node);
     void Visit(FuncDeclareNode node);
     void Visit(ParamNode node);
     void Visit(ReturnNode node);

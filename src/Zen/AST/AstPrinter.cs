@@ -18,6 +18,14 @@ public class AstPrinter : IAstVisitor
         End();
     }
 
+    public void Visit(VarDeclareNode node)
+    {
+        Print(node);
+        Begin();
+        node.Value.Accept(this);
+        End();
+    }
+
     public void Visit(FuncDeclareNode node)
     {
         Print(node);
