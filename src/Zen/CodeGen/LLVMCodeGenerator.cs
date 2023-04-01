@@ -126,6 +126,15 @@ public class LLVMCodeGenerator : IAstVisitor
         _scope.End();
     }
 
+    public void Visit(BinaryOpNode node)
+    {
+        BinaryOpType type = node.Type;
+        LLVMValueRef left = Eval(node.Left);
+        LLVMValueRef right = Eval(node.Right);
+        LLVMValueRef result = GetLLVMBinOp(type, left, right);
+        _stack.Push(result);
+    }
+
     private void DeclareFunction(FuncDeclareNode node)
     {
         LLVMTypeRef returnType = GetLLVMType(node.ReturnType);
@@ -167,6 +176,17 @@ public class LLVMCodeGenerator : IAstVisitor
             "void" => _context.VoidType,
             "i32" => _context.Int32Type,
             _ => throw new NotSupportedException(type)
+        };
+
+    private LLVMValueRef GetLLVMBinOp(BinaryOpType op, LLVMValueRef left, LLVMValueRef right) =>
+        op switch
+        {
+            BinaryOpType.Add => _builder.BuildAdd(left, right),
+            BinaryOpType.Sub => _builder.BuildSub(left, right),
+            BinaryOpType.Mul => _builder.BuildMul(left, right),
+            BinaryOpType.Div => _builder.BuildSDiv(left, right),
+            BinaryOpType.Mod => _builder.BuildSRem(left, right),
+            _ => throw new NotSupportedException(op.ToString())
         };
 
     private LLVMValueRef Eval(IAstNode node)

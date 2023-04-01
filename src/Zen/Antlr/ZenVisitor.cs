@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Antlr4.Runtime.Tree;
 using Zen.AST;
@@ -62,6 +63,33 @@ public class ZenVisitor : ZenBaseVisitor<IAstNode>
         IAstNode[] nodes = context.statement().Select(Visit).ToArray();
         return new BlockNode(nodes);
     }
+
+    public override IAstNode VisitAddition(ZenParser.AdditionContext context)
+    {
+        BinaryOpType type = ParseBinaryOpType(context.op.Text);
+        IAstNode left = Visit(context.left);
+        IAstNode right = Visit(context.right);
+        return new BinaryOpNode(type, left, right);
+    }
+
+    public override IAstNode VisitMultiplication(ZenParser.MultiplicationContext context)
+    {
+        BinaryOpType type = ParseBinaryOpType(context.op.Text);
+        IAstNode left = Visit(context.left);
+        IAstNode right = Visit(context.right);
+        return new BinaryOpNode(type, left, right);
+    }
+
+    private static BinaryOpType ParseBinaryOpType(string type) =>
+        type switch
+        {
+            "+" => BinaryOpType.Add,
+            "-" => BinaryOpType.Sub,
+            "*" => BinaryOpType.Mul,
+            "/" => BinaryOpType.Div,
+            "%" => BinaryOpType.Mod,
+            _ => throw new NotSupportedException(type)
+        };
 
     private static string AsId(ITerminalNode node) => node.GetText();
 

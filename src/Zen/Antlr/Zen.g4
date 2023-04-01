@@ -7,6 +7,8 @@ module
 expression
     : INTEGER                                           # IntegerLiteral
     | ID                                                # Id
+    | left=expression op=('*'|'/'|'%') right=expression # Multiplication
+    | left=expression op=('+'|'-') right=expression     # Addition
     ;
 
 statement
