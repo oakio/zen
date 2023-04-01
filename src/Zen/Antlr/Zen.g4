@@ -4,6 +4,15 @@ module
     : declaration+ EOF
     ;
 
+expression
+    : INTEGER                                           # IntegerLiteral
+    | ID                                                # Id
+    ;
+
+statement
+    : return
+    ;
+
 declaration
     : funcDeclare
     ;
@@ -18,7 +27,11 @@ param
     ;
 
 block
-    : '{' '}'
+    : '{' statement* '}'
+    ;
+
+return
+    : 'return' expression? ';'
     ;
 
 TYPE
@@ -28,6 +41,10 @@ TYPE
 
 ID
     : [a-zA-Z_]+[0-9a-zA-Z_]*
+    ;
+
+INTEGER
+    : [0-9]+
     ;
 
 WS

@@ -18,6 +18,39 @@ public class AstPrinter : IAstVisitor
         End();
     }
 
+    public void Visit(FuncDeclareNode node)
+    {
+        Print(node);
+        Begin();
+        AcceptAll(node.Parameters);
+        node.Body?.Accept(this);
+        End();
+    }
+
+    public void Visit(ParamNode node) => Print(node);
+
+    public void Visit(ReturnNode node)
+    {
+        Print(node);
+        Begin();
+        node.Value.Accept(this);
+        End();
+    }
+
+    public void Visit(ReturnVoidNode node) => Print(node);
+
+    public void Visit(IdNode node) => Print(node);
+
+    public void Visit(IntegerLiteralNode node) => Print(node);
+
+    public void Visit(BlockNode node)
+    {
+        Print(node);
+        Begin();
+        AcceptAll(node.Nodes);
+        End();
+    }
+
     private void Print(IAstNode node)
     {
         string pad = new string(' ', _padding * 4); // TODO: cache
