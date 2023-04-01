@@ -140,6 +140,13 @@ public class ZenVisitor : ZenBaseVisitor<IAstNode>
         return new TernaryOpNode(condition, thenValue, elseValue);
     }
 
+    public override IAstNode VisitWhileLoop(ZenParser.WhileLoopContext context)
+    {
+        IAstNode condition = Visit(context.condition);
+        IAstNode body = Visit(context.body);
+        return new WhileLoopNode(condition, body);
+    }
+
     private static BinaryOpType ParseBinaryOpType(string type) =>
         type switch
         {

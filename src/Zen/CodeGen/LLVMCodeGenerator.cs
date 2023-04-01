@@ -247,6 +247,29 @@ public class LLVMCodeGenerator : IAstVisitor
         _stack.Push(phiValue);
     }
 
+    public void Visit(WhileLoopNode node)
+    {
+        LLVMBasicBlockRef conditionBlock = AppendBasicBlock(_currentBlock, "loop");
+        LLVMBasicBlockRef bodyBlock = AppendBasicBlock(conditionBlock, "loop.body");
+        LLVMBasicBlockRef endBlock = AppendBasicBlock(bodyBlock, "loop.end");
+
+        _builder.BuildBr(conditionBlock);
+
+        // emit Condition
+        SetCurrentBlock(conditionBlock);
+        LLVMValueRef condition = Eval(node.Condition);
+        _builder.BuildCondBr(condition, bodyBlock, endBlock);
+
+        // emit Body
+        SetCurrentBlock(bodyBlock);
+        _scope.Begin();
+        Accept(node.Body);
+        _scope.End();
+        _builder.BuildBr(conditionBlock);
+
+        SetCurrentBlock(endBlock);
+    }
+
     private void DeclareFunction(FuncDeclareNode node)
     {
         LLVMTypeRef returnType = GetLLVMType(node.ReturnType);

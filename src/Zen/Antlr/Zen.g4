@@ -22,6 +22,7 @@ statement
     | assign
     | varDeclare
     | ifElse
+    | whileLoop
     ;
 
 declaration
@@ -58,6 +59,10 @@ assign
 
 ifElse
     : 'if' '(' condition=expression ')' thenBlock=block ('else' elseBlock=block)?
+    ;
+
+whileLoop
+    : 'while' '(' condition=expression ')' body=block
     ;
 
 TYPE
