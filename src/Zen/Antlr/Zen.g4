@@ -26,6 +26,7 @@ statement
     | ifElse
     | whileLoop
     | break
+    | continue
     ;
 
 declaration
@@ -70,6 +71,10 @@ whileLoop
 
 break
     : 'break' ';'
+    ;
+
+continue
+    : 'continue' ';'
     ;
 
 TYPE

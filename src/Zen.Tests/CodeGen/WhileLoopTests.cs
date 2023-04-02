@@ -38,4 +38,22 @@ i32 main(i32 x) {
 }";
         Runner.Run<int>(code, 1).Should().Be(2);
     }
+
+    [Test]
+    public void Continue_statement_in_while_loop_test()
+    {
+        const string code = @"
+i32 main() {
+    i32 x = 0;
+    i32 y = 0;
+    while (x < 10) {
+        x = x + 1;
+        if (x < 3) { y = y - 1; continue; y = y + 10; }
+        y = y + 1;
+    }
+    return y;
+}";
+
+        Runner.Run<int>(code).Should().Be(6);
+    }
 }

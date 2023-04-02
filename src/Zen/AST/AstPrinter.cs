@@ -117,6 +117,8 @@ public class AstPrinter : IAstVisitor
 
     public void Visit(BreakNode node) => Print(node);
 
+    public void Visit(ContinueNode node) => Print(node);
+
     private void Print(IAstNode node)
     {
         string pad = new string(' ', _padding * 4); // TODO: cache

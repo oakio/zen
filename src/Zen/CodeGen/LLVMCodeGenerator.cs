@@ -286,6 +286,7 @@ public class LLVMCodeGenerator : IAstVisitor
         SetCurrentBlock(bodyBlock);
         _scope.Begin();
         _scope.BreakBlock = endBlock;
+        _scope.ContinueBlock = conditionBlock;
 
         Accept(node.Body);
         _scope.End();
@@ -297,6 +298,12 @@ public class LLVMCodeGenerator : IAstVisitor
     public void Visit(BreakNode node)
     {
         _builder.BuildBr(_scope.BreakBlock);
+        EmitUnreachableBasicBlock();
+    }
+
+    public void Visit(ContinueNode node)
+    {
+        _builder.BuildBr(_scope.ContinueBlock);
         EmitUnreachableBasicBlock();
     }
 

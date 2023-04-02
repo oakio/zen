@@ -163,6 +163,8 @@ public class ZenVisitor : ZenBaseVisitor<IAstNode>
 
     public override IAstNode VisitBreak(ZenParser.BreakContext context) => new BreakNode();
 
+    public override IAstNode VisitContinue(ZenParser.ContinueContext context) => new ContinueNode();
+
     private static BinaryOpType ParseBinaryOpType(string type) =>
         type switch
         {
