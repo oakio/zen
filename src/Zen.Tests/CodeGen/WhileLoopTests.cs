@@ -56,4 +56,26 @@ i32 main() {
 
         Runner.Run<int>(code).Should().Be(6);
     }
+
+    [Test]
+    public void Nested_while_loop_break_test()
+    {
+        const string code = @"
+i32 main() {
+    i32 i = 0;
+    i32 k = 0;
+    while (i < 10) {
+        i32 j = 0;
+        while (j < 5) {
+            if (j > i) { break; }
+            j = j + 1;
+            k = k + 1;
+        }
+        if (k == 10) { break; }
+        i = i + 1;
+    }
+    return i + k;
+}";
+        Runner.Run<int>(code).Should().Be(13);
+    }
 }
