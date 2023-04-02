@@ -20,4 +20,5 @@ public interface IAstVisitor
     void Visit(IfNode node);
     void Visit(TernaryOpNode node);
     void Visit(WhileLoopNode node);
+    void Visit(BreakNode node);
 }

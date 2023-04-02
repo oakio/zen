@@ -27,4 +27,15 @@ i32 main(i32 x) {
 }";
         Runner.Run<int>(code, 1).Should().Be(2);
     }
+
+    [Test]
+    public void Break_statement_in_while_loop_test()
+    {
+        const string code = @"
+i32 main(i32 x) {
+    while (x < 3) { x = x + 1; break; x = x + 10; }
+    return x;
+}";
+        Runner.Run<int>(code, 1).Should().Be(2);
+    }
 }

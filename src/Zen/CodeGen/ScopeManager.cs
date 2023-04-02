@@ -10,6 +10,7 @@ public class ScopeManager
         public readonly List<string> Names;
         public LLVMValueRef ReturnValuePtr;
         public LLVMBasicBlockRef ReturnBlock;
+        public LLVMBasicBlockRef BreakBlock;
 
         public Scope()
         {
@@ -20,6 +21,7 @@ public class ScopeManager
         {
             ReturnValuePtr = prev.ReturnValuePtr;
             ReturnBlock = prev.ReturnBlock;
+            BreakBlock = prev.BreakBlock;
         }
     }
 
@@ -68,6 +70,12 @@ public class ScopeManager
     {
         get => Current.ReturnBlock;
         set => Current.ReturnBlock = value;
+    }
+
+    public LLVMBasicBlockRef BreakBlock
+    {
+        get => Current.BreakBlock;
+        set => Current.BreakBlock = value;
     }
 
     private Scope Current => _scopes.Peek();

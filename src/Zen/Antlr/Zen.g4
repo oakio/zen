@@ -25,6 +25,7 @@ statement
     | varDeclare
     | ifElse
     | whileLoop
+    | break
     ;
 
 declaration
@@ -65,6 +66,10 @@ ifElse
 
 whileLoop
     : 'while' '(' condition=expression ')' body=block
+    ;
+
+break
+    : 'break' ';'
     ;
 
 TYPE

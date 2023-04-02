@@ -285,11 +285,19 @@ public class LLVMCodeGenerator : IAstVisitor
         // emit Body
         SetCurrentBlock(bodyBlock);
         _scope.Begin();
+        _scope.BreakBlock = endBlock;
+
         Accept(node.Body);
         _scope.End();
         _builder.BuildBr(conditionBlock);
 
         SetCurrentBlock(endBlock);
+    }
+
+    public void Visit(BreakNode node)
+    {
+        _builder.BuildBr(_scope.BreakBlock);
+        EmitUnreachableBasicBlock();
     }
 
     private void DeclareFunction(FuncDeclareNode node)
