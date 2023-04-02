@@ -10,6 +10,8 @@ expression
     | ID                                                # Id
     | call                                              # FunctionCall
     | '(' expression ')'                                # Parentheses
+    | left=expression '&&' right=expression             # AndOperator
+    | left=expression '||' right=expression             # OrOperator
     | left=expression op=('*'|'/'|'%') right=expression # Multiplication
     | left=expression op=('+'|'-') right=expression     # Addition
     | left=expression op=('<'|'<='|'>'|'>='|'=='|'!=') right=expression         # Relational

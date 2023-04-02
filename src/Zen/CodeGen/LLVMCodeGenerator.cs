@@ -9,6 +9,9 @@ namespace Zen.CodeGen;
 
 public class LLVMCodeGenerator : IAstVisitor
 {
+    private static readonly LLVMValueRef TrueValue = LLVMValueRef.CreateConstInt(LLVMTypeRef.Int1, 1);
+    private static readonly LLVMValueRef FalseValue = LLVMValueRef.CreateConstInt(LLVMTypeRef.Int1, 0);
+
     private LLVMContextRef _context;
     private LLVMBuilderRef _builder;
     private readonly Stack<LLVMValueRef> _stack;
@@ -131,7 +134,7 @@ public class LLVMCodeGenerator : IAstVisitor
 
     public void Visit(BooleanLiteralNode node)
     {
-        LLVMValueRef value = LLVMValueRef.CreateConstInt(LLVMTypeRef.Int1, node.Value ? 1u : 0u);
+        LLVMValueRef value = node.Value ? TrueValue : FalseValue;
         _stack.Push(value);
     }
 
@@ -145,6 +148,18 @@ public class LLVMCodeGenerator : IAstVisitor
     public void Visit(BinaryOpNode node)
     {
         BinaryOpType type = node.Type;
+        if (type == BinaryOpType.And)
+        {
+            EmitAndOp(node.Left, node.Right);
+            return;
+        }
+
+        if (type == BinaryOpType.Or)
+        {
+            EmitOrOp(node.Left, node.Right);
+            return;
+        }
+
         LLVMValueRef left = Eval(node.Left);
         LLVMValueRef right = Eval(node.Right);
         LLVMValueRef result = GetLLVMBinOp(type, left, right);
@@ -290,6 +305,52 @@ public class LLVMCodeGenerator : IAstVisitor
         }
 
         _functions.Add(id, new Entity(func, funcType));
+    }
+
+    private void EmitAndOp(IAstNode leftNode, IAstNode rightNode)
+    {
+        LLVMBasicBlockRef leftBlock = AppendBasicBlock(_currentBlock, "and.left");
+        LLVMBasicBlockRef rightBlock = AppendBasicBlock(leftBlock, "and.right");
+        LLVMBasicBlockRef mergeBlock = AppendBasicBlock(rightBlock, "and.merge");
+
+        _builder.BuildBr(leftBlock);
+
+        SetCurrentBlock(leftBlock);
+        LLVMValueRef left = Eval(leftNode);
+        _builder.BuildCondBr(left, rightBlock, mergeBlock);
+
+        SetCurrentBlock(rightBlock);
+        LLVMValueRef right = Eval(rightNode);
+        _builder.BuildBr(mergeBlock);
+
+        SetCurrentBlock(mergeBlock);
+        LLVMValueRef phiValue = _builder.BuildPhi(LLVMTypeRef.Int1);
+        phiValue.AddIncoming(new[] { FalseValue }, new[] { leftBlock }, 1);
+        phiValue.AddIncoming(new[] { right }, new[] { rightBlock }, 1);
+        _stack.Push(phiValue);
+    }
+
+    private void EmitOrOp(IAstNode leftNode, IAstNode rightNode)
+    {
+        LLVMBasicBlockRef leftBlock = AppendBasicBlock(_currentBlock, "or.left");
+        LLVMBasicBlockRef rightBlock = AppendBasicBlock(leftBlock, "or.right");
+        LLVMBasicBlockRef mergeBlock = AppendBasicBlock(rightBlock, "or.merge");
+
+        _builder.BuildBr(leftBlock);
+
+        SetCurrentBlock(leftBlock);
+        LLVMValueRef left = Eval(leftNode);
+        _builder.BuildCondBr(left, mergeBlock, rightBlock);
+
+        SetCurrentBlock(rightBlock);
+        LLVMValueRef right = Eval(rightNode);
+        _builder.BuildBr(mergeBlock);
+
+        SetCurrentBlock(mergeBlock);
+        LLVMValueRef phiValue = _builder.BuildPhi(LLVMTypeRef.Int1);
+        phiValue.AddIncoming(new[] { TrueValue }, new[] { leftBlock }, 1);
+        phiValue.AddIncoming(new[] { right }, new[] { rightBlock }, 1);
+        _stack.Push(phiValue);
     }
 
     private void SetCurrentBlock(LLVMBasicBlockRef block)

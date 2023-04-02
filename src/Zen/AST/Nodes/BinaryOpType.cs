@@ -14,5 +14,8 @@ public enum BinaryOpType
     Gt,
     Gte,
     Lt,
-    Lte
+    Lte,
+
+    And,
+    Or,
 }

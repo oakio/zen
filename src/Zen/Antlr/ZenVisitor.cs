@@ -80,6 +80,20 @@ public class ZenVisitor : ZenBaseVisitor<IAstNode>
         return new BlockNode(nodes);
     }
 
+    public override IAstNode VisitAndOperator(ZenParser.AndOperatorContext context)
+    {
+        IAstNode left = Visit(context.left);
+        IAstNode right = Visit(context.right);
+        return new BinaryOpNode(BinaryOpType.And, left, right);
+    }
+
+    public override IAstNode VisitOrOperator(ZenParser.OrOperatorContext context)
+    {
+        IAstNode left = Visit(context.left);
+        IAstNode right = Visit(context.right);
+        return new BinaryOpNode(BinaryOpType.Or, left, right);
+    }
+
     public override IAstNode VisitAddition(ZenParser.AdditionContext context)
     {
         BinaryOpType type = ParseBinaryOpType(context.op.Text);
@@ -161,6 +175,8 @@ public class ZenVisitor : ZenBaseVisitor<IAstNode>
             ">=" => BinaryOpType.Gte,
             "<" => BinaryOpType.Lt,
             ">" => BinaryOpType.Gt,
+            "&&" => BinaryOpType.And,
+            "||" => BinaryOpType.Or,
             _ => throw new NotSupportedException(type)
         };
 

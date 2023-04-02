@@ -115,4 +115,26 @@ public class BinaryOpTests
         string code = $"i32 main(i32 a, i32 b) {{ return a {op} b ? 5 : 3; }}";
         Runner.Run<int>(code, a, b).Should().Be(expected ? 5 : 3); //TODO: casting is not implemented yet
     }
+
+    [Test]
+    [TestCase(false, false, false)]
+    [TestCase(false, true, false)]
+    [TestCase(true, false, false)]
+    [TestCase(true, true, true)]
+    public void Logical_And_test(bool left, bool right, bool expected)
+    {
+        const string code = @"i32 main(bool a, bool b) { return a && b ? 5 : 3; }";
+        Runner.Run<int>(code, left, right).Should().Be(expected ? 5 : 3); //TODO: casting is not implemented yet
+    }
+
+    [Test]
+    [TestCase(false, false, false)]
+    [TestCase(false, true, true)]
+    [TestCase(true, false, true)]
+    [TestCase(true, true, true)]
+    public void Logical_Or_test(bool left, bool right, bool expected)
+    {
+        const string code = @"i32 main(bool a, bool b) { return a || b ? 5 : 3; }";
+        Runner.Run<int>(code, left, right).Should().Be(expected ? 5 : 3); //TODO: casting is not implemented yet
+    }
 }
