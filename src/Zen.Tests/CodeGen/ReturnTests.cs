@@ -26,4 +26,11 @@ public class ReturnTests
         const string code = "i32 main(i32 x) { return x + 1; }";
         Runner.Run<int>(code, 10).Should().Be(11);
     }
+
+    [Test]
+    public void Multiple_return()
+    {
+        const string code = "i32 main() { return 5; return 10; }";
+        Runner.Run<int>(code).Should().Be(5);
+    }
 }

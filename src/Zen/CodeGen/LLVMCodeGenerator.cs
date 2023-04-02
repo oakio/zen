@@ -115,9 +115,16 @@ public class LLVMCodeGenerator : IAstVisitor
         LLVMValueRef value = Eval(node.Value);
         _builder.BuildStore(value, _scope.ReturnValuePtr);
         _builder.BuildBr(_scope.ReturnBlock);
+
+        EmitUnreachableBasicBlock();
     }
 
-    public void Visit(ReturnVoidNode node) => _builder.BuildBr(_scope.ReturnBlock);
+    public void Visit(ReturnVoidNode node)
+    {
+        _builder.BuildBr(_scope.ReturnBlock);
+
+        EmitUnreachableBasicBlock();
+    }
 
     public void Visit(IdNode node)
     {
@@ -351,6 +358,12 @@ public class LLVMCodeGenerator : IAstVisitor
         phiValue.AddIncoming(new[] { TrueValue }, new[] { leftBlock }, 1);
         phiValue.AddIncoming(new[] { right }, new[] { rightBlock }, 1);
         _stack.Push(phiValue);
+    }
+
+    private void EmitUnreachableBasicBlock()
+    {
+        LLVMBasicBlockRef unreachable = AppendBasicBlock(_currentBlock);
+        SetCurrentBlock(unreachable);
     }
 
     private void SetCurrentBlock(LLVMBasicBlockRef block)
