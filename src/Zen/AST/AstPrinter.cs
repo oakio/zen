@@ -70,6 +70,14 @@ public class AstPrinter : IAstVisitor
         End();
     }
 
+    public void Visit(UnaryOpNode node)
+    {
+        Print(node);
+        Begin();
+        node.Value.Accept(this);
+        End();
+    }
+
     public void Visit(CallNode node)
     {
         Print(node);

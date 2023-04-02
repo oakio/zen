@@ -173,6 +173,29 @@ public class LLVMCodeGenerator : IAstVisitor
         _stack.Push(result);
     }
 
+    public void Visit(UnaryOpNode node)
+    {
+        LLVMValueRef value = Eval(node.Value);
+
+        switch (node.Type)
+        {
+            case UnaryOpType.Neg:
+            {
+                LLVMValueRef negValue = LLVMValueRef.CreateConstNSWNeg(value);
+                _stack.Push(negValue);
+                return;
+            }
+            case UnaryOpType.Not:
+            {
+                LLVMValueRef notValue = LLVMValueRef.CreateConstNot(value);
+                _stack.Push(notValue);
+                return;
+            }
+            default:
+                throw new NotSupportedException(node.Type.ToString());
+        }
+    }
+
     public void Visit(CallNode node)
     {
         Entity callee = _functions[node.Id];

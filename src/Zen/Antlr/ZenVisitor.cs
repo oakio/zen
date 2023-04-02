@@ -80,6 +80,13 @@ public class ZenVisitor : ZenBaseVisitor<IAstNode>
         return new BlockNode(nodes);
     }
 
+    public override IAstNode VisitUnary(ZenParser.UnaryContext context)
+    {
+        UnaryOpType type = ParseUnaryOpType(context.op.Text);
+        IAstNode value = Visit(context.expression());
+        return new UnaryOpNode(type, value);
+    }
+
     public override IAstNode VisitAndOperator(ZenParser.AndOperatorContext context)
     {
         IAstNode left = Visit(context.left);
@@ -181,6 +188,14 @@ public class ZenVisitor : ZenBaseVisitor<IAstNode>
             ">" => BinaryOpType.Gt,
             "&&" => BinaryOpType.And,
             "||" => BinaryOpType.Or,
+            _ => throw new NotSupportedException(type)
+        };
+
+    private static UnaryOpType ParseUnaryOpType(string type) =>
+        type switch
+        {
+            "-" => UnaryOpType.Neg,
+            "!" => UnaryOpType.Not,
             _ => throw new NotSupportedException(type)
         };
 
