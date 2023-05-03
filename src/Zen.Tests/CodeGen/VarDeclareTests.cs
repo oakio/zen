@@ -7,7 +7,7 @@ namespace Zen.Tests.CodeGen;
 public class VarDeclareTests
 {
     [Test]
-    public void Declare_variable_test()
+    public void Declare_i32_variable_test()
     {
         const string code = @"
 i32 main(i32 a) {

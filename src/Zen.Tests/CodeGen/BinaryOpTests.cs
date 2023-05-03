@@ -112,8 +112,8 @@ public class BinaryOpTests
     [TestCase(">", -5, -5, false)]
     public void Relation_i32_i32_test(string op, int a, int b, bool expected)
     {
-        string code = $"i32 main(i32 a, i32 b) {{ return a {op} b ? 5 : 3; }}";
-        Runner.Run<int>(code, a, b).Should().Be(expected ? 5 : 3); //TODO: casting is not implemented yet
+        string code = $"bool main(i32 a, i32 b) {{ return a {op} b; }}";
+        Runner.Run<bool>(code, a, b).Should().Be(expected);
     }
 
     [Test]
@@ -123,8 +123,8 @@ public class BinaryOpTests
     [TestCase(true, true, true)]
     public void Logical_And_test(bool left, bool right, bool expected)
     {
-        const string code = @"i32 main(bool a, bool b) { return a && b ? 5 : 3; }";
-        Runner.Run<int>(code, left, right).Should().Be(expected ? 5 : 3); //TODO: casting is not implemented yet
+        const string code = @"bool main(bool a, bool b) { return a && b; }";
+        Runner.Run<bool>(code, left, right).Should().Be(expected);
     }
 
     [Test]
@@ -134,7 +134,7 @@ public class BinaryOpTests
     [TestCase(true, true, true)]
     public void Logical_Or_test(bool left, bool right, bool expected)
     {
-        const string code = @"i32 main(bool a, bool b) { return a || b ? 5 : 3; }";
-        Runner.Run<int>(code, left, right).Should().Be(expected ? 5 : 3); //TODO: casting is not implemented yet
+        const string code = @"bool main(bool a, bool b) { return a || b; }";
+        Runner.Run<bool>(code, left, right).Should().Be(expected);
     }
 }
