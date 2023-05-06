@@ -7,6 +7,13 @@ namespace Zen.Tests.CodeGen;
 public class VarDeclareTests
 {
     [Test]
+    public void Declare_i8_variable_test()
+    {
+        const string code = @"i8 main(i8 a) { i8 v = a + 7; return v; }";
+        Runner.Run<sbyte>(code, 3).Should().Be(10);
+    }
+
+    [Test]
     public void Declare_i32_variable_test()
     {
         const string code = @"

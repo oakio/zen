@@ -445,6 +445,7 @@ public class LLVMCodeGenerator : IAstVisitor
         type switch
         {
             "void" => _context.VoidType,
+            "i8" => _context.Int8Type,
             "i32" => _context.Int32Type,
             "f64" => _context.DoubleType,
             "bool" => _context.Int1Type,
@@ -497,7 +498,14 @@ public class LLVMCodeGenerator : IAstVisitor
             return _builder.BuildFPToSI(value, targetType);
         }
 
-        return _builder.BuildSIToFP(value, targetType);
+        if (targetType == LLVMTypeRef.Double)
+        {
+            return _builder.BuildSIToFP(value, targetType);
+        }
+
+        return targetType.IntWidth < value.TypeOf.IntWidth
+            ? _builder.BuildTrunc(value, targetType)
+            : _builder.BuildSExt(value, targetType);
     }
 
     private LLVMValueRef Eval(IAstNode node)

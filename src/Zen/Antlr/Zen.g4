@@ -81,7 +81,8 @@ continue
     ;
 
 TYPE
-    : 'i32'
+    : 'i8'
+    | 'i32'
     | 'f64'
     | 'void'
     | 'bool'
