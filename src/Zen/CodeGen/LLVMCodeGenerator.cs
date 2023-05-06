@@ -339,6 +339,21 @@ public class LLVMCodeGenerator : IAstVisitor
         EmitUnreachableBasicBlock();
     }
 
+    public void Visit(CastNode node)
+    {
+        LLVMTypeRef targetType = GetLLVMType(node.Type);
+        LLVMValueRef value = Eval(node.Value);
+
+        if (targetType == value.TypeOf)
+        {
+            _stack.Push(value);
+            return;
+        }
+
+        LLVMValueRef casted = GetLLVMCast(value, targetType);
+        _stack.Push(casted);
+    }
+
     private void DeclareFunction(FuncDeclareNode node)
     {
         LLVMTypeRef returnType = GetLLVMType(node.ReturnType);
@@ -474,6 +489,16 @@ public class LLVMCodeGenerator : IAstVisitor
             BinaryOpType.Gte => _builder.BuildFCmp(LLVMRealPredicate.LLVMRealUGE, left, right),
             _ => throw new NotSupportedException(op.ToString())
         };
+
+    private LLVMValueRef GetLLVMCast(LLVMValueRef value, LLVMTypeRef targetType)
+    {
+        if (IsFloat(value))
+        {
+            return _builder.BuildFPToSI(value, targetType);
+        }
+
+        return _builder.BuildSIToFP(value, targetType);
+    }
 
     private LLVMValueRef Eval(IAstNode node)
     {

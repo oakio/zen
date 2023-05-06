@@ -129,6 +129,14 @@ public class AstPrinter : IAstVisitor
 
     public void Visit(ContinueNode node) => Print(node);
 
+    public void Visit(CastNode node)
+    {
+        Print(node);
+        Begin();
+        node.Value.Accept(this);
+        End();
+    }
+
     private void Print(IAstNode node)
     {
         string pad = new string(' ', _padding * 4); // TODO: cache

@@ -180,6 +180,13 @@ public class ZenVisitor : ZenBaseVisitor<IAstNode>
 
     public override IAstNode VisitContinue(ZenParser.ContinueContext context) => new ContinueNode();
 
+    public override IAstNode VisitCasting(ZenParser.CastingContext context)
+    {
+        string type = AsType(context.TYPE());
+        IAstNode value = Visit(context.expression());
+        return new CastNode(type, value);
+    }
+
     private static BinaryOpType ParseBinaryOpType(string type) =>
         type switch
         {

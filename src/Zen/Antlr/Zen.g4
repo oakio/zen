@@ -11,6 +11,7 @@ expression
     | ID                                                # Id
     | call                                              # FunctionCall
     | '(' expression ')'                                # Parentheses
+    | '(' TYPE ')' expression                           # Casting
     | op=('-'|'!') expression                           # Unary
     | left=expression '&&' right=expression             # AndOperator
     | left=expression '||' right=expression             # OrOperator

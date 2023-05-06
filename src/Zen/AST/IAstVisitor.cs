@@ -24,4 +24,5 @@ public interface IAstVisitor
     void Visit(WhileLoopNode node);
     void Visit(BreakNode node);
     void Visit(ContinueNode node);
+    void Visit(CastNode node);
 }
