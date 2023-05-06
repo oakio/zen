@@ -18,6 +18,17 @@ public class BinaryOpTests
     }
 
     [Test]
+    [TestCase(3.1, 5.4, 8.5)]
+    [TestCase(3.1, -5.4, -2.3)]
+    [TestCase(-3.1, 5.4, 2.3)]
+    [TestCase(-3.1, -5.1, -8.2)]
+    public void Add_f64_f64(double a, double b, double expected)
+    {
+        const string code = "f64 main(f64 a, f64 b) { return a + b; }";
+        Runner.Run<double>(code, a, b).Should().BeApproximately(expected, 0.000_001);
+    }
+
+    [Test]
     [TestCase(3, 5, -2)]
     [TestCase(3, -5, 8)]
     [TestCase(-3, 5, -8)]
@@ -29,12 +40,33 @@ public class BinaryOpTests
     }
 
     [Test]
+    [TestCase(3.1, 5.4, -2.3)]
+    [TestCase(3.1, -5.4, 8.5)]
+    [TestCase(-3.1, 5.4, -8.5)]
+    [TestCase(-3.1, -5.4, 2.3)]
+    public void Sub_f64_f64(double a, double b, double expected)
+    {
+        const string code = "f64 main(f64 a, f64 b) { return a - b; }";
+        Runner.Run<double>(code, a, b).Should().BeApproximately(expected, 0.000_001);
+    }
+
+
+    [Test]
     [TestCase(3, 5, 15)]
     [TestCase(3, -5, -15)]
     public void Mul_i32_i32(int a, int b, int expected)
     {
         const string code = "i32 main(i32 a, i32 b) { return a * b; }";
         Runner.Run<int>(code, a, b).Should().Be(expected);
+    }
+
+    [Test]
+    [TestCase(3.1, 5.4, 16.74)]
+    [TestCase(3.1, -5.4, -16.74)]
+    public void Mul_f64_f64(double a, double b, double expected)
+    {
+        const string code = "f64 main(f64 a, f64 b) { return a * b; }";
+        Runner.Run<double>(code, a, b).Should().BeApproximately(expected, 0.000_001);
     }
 
     [Test]
@@ -49,6 +81,17 @@ public class BinaryOpTests
     }
 
     [Test]
+    [TestCase(7.1, 2.5, 2.84)]
+    [TestCase(7.1, -2.5, -2.84)]
+    [TestCase(-7.1, 2.5, -2.84)]
+    [TestCase(-7.1, -2.5, 2.84)]
+    public void Div_f64_f64(double a, double b, double expected)
+    {
+        const string code = "f64 main(f64 a, f64 b) { return a / b; }";
+        Runner.Run<double>(code, a, b).Should().BeApproximately(expected, 0.000_001);
+    }
+
+    [Test]
     [TestCase(7, 2, 1)]
     [TestCase(7, -2, 1)]
     [TestCase(-7, 2, -1)]
@@ -57,6 +100,17 @@ public class BinaryOpTests
     {
         const string code = "i32 main(i32 a, i32 b) { return a % b; }";
         Runner.Run<int>(code, a, b).Should().Be(expected);
+    }
+
+    [Test]
+    [TestCase(7.1, 2.4, 2.3)]
+    [TestCase(7.1, -2.4, 2.3)]
+    [TestCase(-7.1, 2.4, -2.3)]
+    [TestCase(-7.1, -2.4, -2.3)]
+    public void Mod_f64_f64(double a, double b, double expected)
+    {
+        const string code = "f64 main(f64 a, f64 b) { return a % b; }";
+        Runner.Run<double>(code, a, b).Should().BeApproximately(expected, 0.000_0001);
     }
 
     [Test]
@@ -113,6 +167,56 @@ public class BinaryOpTests
     public void Relation_i32_i32_test(string op, int a, int b, bool expected)
     {
         string code = $"bool main(i32 a, i32 b) {{ return a {op} b; }}";
+        Runner.Run<bool>(code, a, b).Should().Be(expected);
+    }
+
+    [Test]
+    [TestCase("==", 7.1, 7.1, true)]
+    [TestCase("==", -7.1, -7.1, true)]
+    [TestCase("==", 7.1, 5.2, false)]
+
+    [TestCase("!=", 7.1, 7.1, false)]
+    [TestCase("!=", -7.1, -7.1, false)]
+    [TestCase("!=", 7.1, 5.2, true)]
+
+    [TestCase("<=", 7.1, 5.2, false)]
+    [TestCase("<=", 5.2, 7.1, true)]
+    [TestCase("<=", 5.2, 5.2, true)]
+    [TestCase("<=", -7.1, 5.2, true)]
+    [TestCase("<=", 7.1, -5.2, false)]
+    [TestCase("<=", -7.1, -5.2, true)]
+    [TestCase("<=", -5.2, -7.1, false)]
+    [TestCase("<=", -5.2, -5.2, true)]
+
+    [TestCase(">=", 7.1, 5.2, true)]
+    [TestCase(">=", 5.2, 7.1, false)]
+    [TestCase(">=", 5.2, 5.2, true)]
+    [TestCase(">=", -7.1, 5.2, false)]
+    [TestCase(">=", 7.1, -5.2, true)]
+    [TestCase(">=", -7.1, -5.2, false)]
+    [TestCase(">=", -5.2, -7.1, true)]
+    [TestCase(">=", -5.2, -5.2, true)]
+
+    [TestCase("<", 7.1, 5.2, false)]
+    [TestCase("<", 5.2, 7.1, true)]
+    [TestCase("<", 5.2, 5.2, false)]
+    [TestCase("<", -7.1, 5.2, true)]
+    [TestCase("<", 7.1, -5.2, false)]
+    [TestCase("<", -7.1, -5.2, true)]
+    [TestCase("<", -5.2, -7.1, false)]
+    [TestCase("<", -5.2, -5.2, false)]
+
+    [TestCase(">", 7.1, 5.2, true)]
+    [TestCase(">", 5.2, 7.1, false)]
+    [TestCase(">", 5.2, 5.2, false)]
+    [TestCase(">", -7.1, 5.2, false)]
+    [TestCase(">", 7.1, -5.2, true)]
+    [TestCase(">", -7.1, -5.2, false)]
+    [TestCase(">", -5.2, -7.1, true)]
+    [TestCase(">", -5.2, -5.2, false)]
+    public void Relation_f64_f64_test(string op, double a, double b, bool expected)
+    {
+        string code = $"bool main(f64 a, f64 b) {{ return a {op} b; }}";
         Runner.Run<bool>(code, a, b).Should().Be(expected);
     }
 

@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.Linq;
 using Antlr4.Runtime.Tree;
 using Zen.AST;
@@ -65,6 +66,13 @@ public class ZenVisitor : ZenBaseVisitor<IAstNode>
         string literal = context.INTEGER().GetText();
         ulong value = ulong.Parse(literal);
         return new IntegerLiteralNode(value);
+    }
+
+    public override IAstNode VisitFloatLiteral(ZenParser.FloatLiteralContext context)
+    {
+        string literal = context.FLOAT().GetText();
+        double value = double.Parse(literal, CultureInfo.InvariantCulture);
+        return new FloatLiteralNode(value);
     }
 
     public override IAstNode VisitBoolLiteral(ZenParser.BoolLiteralContext context)

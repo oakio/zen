@@ -6,6 +6,7 @@ module
 
 expression
     : INTEGER                                           # IntegerLiteral
+    | FLOAT                                             # FloatLiteral
     | ('true'|'false')                                  # BoolLiteral
     | ID                                                # Id
     | call                                              # FunctionCall
@@ -80,6 +81,7 @@ continue
 
 TYPE
     : 'i32'
+    | 'f64'
     | 'void'
     | 'bool'
     ;
@@ -90,6 +92,10 @@ ID
 
 INTEGER
     : [0-9]+
+    ;
+
+FLOAT
+    : [0-9]+'.'[0-9]+
     ;
 
 WS

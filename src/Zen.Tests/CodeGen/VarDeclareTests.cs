@@ -16,4 +16,15 @@ i32 main(i32 a) {
 }";
         Runner.Run<int>(code, 3).Should().Be(10);
     }
+
+    [Test]
+    public void Declare_f64_variable_test()
+    {
+        const string code = @"
+f64 main(f64 a) {
+    f64 v = a + 7.3;
+    return v;
+}";
+        Runner.Run<double>(code, 3.2).Should().BeApproximately(10.5, 0.000_001);
+    }
 }

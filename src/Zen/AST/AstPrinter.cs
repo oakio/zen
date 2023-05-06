@@ -51,6 +51,8 @@ public class AstPrinter : IAstVisitor
 
     public void Visit(IntegerLiteralNode node) => Print(node);
 
+    public void Visit(FloatLiteralNode node) => Print(node);
+
     public void Visit(BooleanLiteralNode node) => Print(node);
 
     public void Visit(BlockNode node)

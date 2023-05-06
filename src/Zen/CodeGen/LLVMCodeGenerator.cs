@@ -139,6 +139,12 @@ public class LLVMCodeGenerator : IAstVisitor
         _stack.Push(value);
     }
 
+    public void Visit(FloatLiteralNode node)
+    {
+        LLVMValueRef value = LLVMValueRef.CreateConstReal(LLVMTypeRef.Double, node.Value);
+        _stack.Push(value);
+    }
+
     public void Visit(BooleanLiteralNode node)
     {
         LLVMValueRef value = node.Value ? TrueValue : FalseValue;
@@ -181,7 +187,10 @@ public class LLVMCodeGenerator : IAstVisitor
         {
             case UnaryOpType.Neg:
             {
-                LLVMValueRef negValue = LLVMValueRef.CreateConstNSWNeg(value);
+                LLVMValueRef negValue = IsFloat(value)
+                    ? LLVMValueRef.CreateConstFNeg(value)
+                    : LLVMValueRef.CreateConstNSWNeg(value);
+
                 _stack.Push(negValue);
                 return;
             }
@@ -422,11 +431,17 @@ public class LLVMCodeGenerator : IAstVisitor
         {
             "void" => _context.VoidType,
             "i32" => _context.Int32Type,
+            "f64" => _context.DoubleType,
             "bool" => _context.Int1Type,
             _ => throw new NotSupportedException(type)
         };
 
     private LLVMValueRef GetLLVMBinOp(BinaryOpType op, LLVMValueRef left, LLVMValueRef right) =>
+        IsFloat(left)
+            ? GetLLVMFloatBinOp(op, left, right)
+            : GetLLVMIntBinOp(op, left, right);
+
+    private LLVMValueRef GetLLVMIntBinOp(BinaryOpType op, LLVMValueRef left, LLVMValueRef right) =>
         op switch
         {
             BinaryOpType.Add => _builder.BuildAdd(left, right),
@@ -440,6 +455,23 @@ public class LLVMCodeGenerator : IAstVisitor
             BinaryOpType.Gt => _builder.BuildICmp(LLVMIntPredicate.LLVMIntSGT, left, right),
             BinaryOpType.Lte => _builder.BuildICmp(LLVMIntPredicate.LLVMIntSLE, left, right),
             BinaryOpType.Gte => _builder.BuildICmp(LLVMIntPredicate.LLVMIntSGE, left, right),
+            _ => throw new NotSupportedException(op.ToString())
+        };
+
+    private LLVMValueRef GetLLVMFloatBinOp(BinaryOpType op, LLVMValueRef left, LLVMValueRef right) =>
+        op switch
+        {
+            BinaryOpType.Add => _builder.BuildFAdd(left, right),
+            BinaryOpType.Sub => _builder.BuildFSub(left, right),
+            BinaryOpType.Mul => _builder.BuildFMul(left, right),
+            BinaryOpType.Div => _builder.BuildFDiv(left, right),
+            BinaryOpType.Mod => _builder.BuildFRem(left, right),
+            BinaryOpType.Eq => _builder.BuildFCmp(LLVMRealPredicate.LLVMRealUEQ, left, right),
+            BinaryOpType.Ne => _builder.BuildFCmp(LLVMRealPredicate.LLVMRealUNE, left, right),
+            BinaryOpType.Lt => _builder.BuildFCmp(LLVMRealPredicate.LLVMRealULT, left, right),
+            BinaryOpType.Gt => _builder.BuildFCmp(LLVMRealPredicate.LLVMRealUGT, left, right),
+            BinaryOpType.Lte => _builder.BuildFCmp(LLVMRealPredicate.LLVMRealULE, left, right),
+            BinaryOpType.Gte => _builder.BuildFCmp(LLVMRealPredicate.LLVMRealUGE, left, right),
             _ => throw new NotSupportedException(op.ToString())
         };
 
@@ -461,4 +493,6 @@ public class LLVMCodeGenerator : IAstVisitor
     private void Accept(IAstNode node) => node.Accept(this);
 
     private static bool HasTerminator(LLVMBasicBlockRef self) => self.Terminator.Handle != IntPtr.Zero;
+
+    private static bool IsFloat(LLVMValueRef value) => value.TypeOf == LLVMTypeRef.Double;
 }
