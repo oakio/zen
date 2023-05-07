@@ -447,6 +447,7 @@ public class LLVMCodeGenerator : IAstVisitor
             "void" => _context.VoidType,
             "i8" => _context.Int8Type,
             "i32" => _context.Int32Type,
+            "u32" => _context.Int32Type,
             "f64" => _context.DoubleType,
             "bool" => _context.Int1Type,
             _ => throw new NotSupportedException(type)

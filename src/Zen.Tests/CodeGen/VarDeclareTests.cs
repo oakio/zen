@@ -25,6 +25,13 @@ i32 main(i32 a) {
     }
 
     [Test]
+    public void Declare_u32_variable_test()
+    {
+        const string code = @"u32 main(u32 a) { u32 v = a + 10; return v; }";
+        Runner.Run<uint>(code, int.MaxValue).Should().Be(2147483657);
+    }
+
+    [Test]
     public void Declare_f64_variable_test()
     {
         const string code = @"

@@ -83,6 +83,7 @@ continue
 TYPE
     : 'i8'
     | 'i32'
+    | 'u32'
     | 'f64'
     | 'void'
     | 'bool'

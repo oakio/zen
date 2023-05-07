@@ -171,6 +171,44 @@ public class BinaryOpTests
     }
 
     [Test]
+    [TestCase("==", 7, 7u, true)]
+    [TestCase("==", -7, 5u, false)]
+    [TestCase("==", 7, 5u, false)]
+
+    [TestCase("!=", 7, 7u, false)]
+    [TestCase("!=", -7, 5u, true)]
+    [TestCase("!=", 7, 5u, true)]
+
+    [TestCase("<=", 7, 5u, false)]
+    [TestCase("<=", 5, 7u, true)]
+    [TestCase("<=", 5, 5u, true)]
+    [TestCase("<=", -7, 5u, true)]
+    [TestCase("<=", -1000, uint.MaxValue, true)]
+
+    [TestCase(">=", 7, 5u, true)]
+    [TestCase(">=", 5, 7u, false)]
+    [TestCase(">=", 5, 5u, true)]
+    [TestCase(">=", -7, 5u, false)]
+    [TestCase(">=", -1000, uint.MaxValue, false)]
+
+    [TestCase("<", 7, 5u, false)]
+    [TestCase("<", 5, 7u, true)]
+    [TestCase("<", 5, 5u, false)]
+    [TestCase("<", -7, 5u, true)]
+    [TestCase("<", -1000, uint.MaxValue, true)]
+
+    [TestCase(">", 7, 5u, true)]
+    [TestCase(">", 5, 7u, false)]
+    [TestCase(">", 5, 5u, false)]
+    [TestCase(">", -7, 5u, false)]
+    [TestCase(">", -1000, uint.MaxValue, false)]
+    public void Relation_i32_u32_test(string op, int a, uint b, bool expected)
+    {
+        string code = $"bool main(i32 a, i32 b) {{ return a {op} b; }}";
+        Runner.Run<bool>(code, a, b).Should().Be(expected);
+    }
+
+    [Test]
     [TestCase("==", 7.1, 7.1, true)]
     [TestCase("==", -7.1, -7.1, true)]
     [TestCase("==", 7.1, 5.2, false)]
