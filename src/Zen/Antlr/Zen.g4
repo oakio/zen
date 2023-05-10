@@ -11,7 +11,7 @@ expression
     | ID                                                # Id
     | call                                              # FunctionCall
     | '(' expression ')'                                # Parentheses
-    | '(' TYPE ')' expression                           # Casting
+    | '(' type ')' expression                           # Casting
     | op=('-'|'!') expression                           # Unary
     | left=expression '&&' right=expression             # AndOperator
     | left=expression '||' right=expression             # OrOperator
@@ -37,15 +37,15 @@ declaration
     ;
 
 varDeclare
-    : TYPE ID '=' expression ';';
+    : type ID '=' expression ';';
 
 funcDeclare
-    : TYPE ID '(' param? (',' param)* ')' ';'
-    | TYPE ID '(' param? (',' param)* ')' block?
+    : type ID '(' param? (',' param)* ')' ';'
+    | type ID '(' param? (',' param)* ')' block?
     ;
 
 param
-    : TYPE ID
+    : type ID
     ;
 
 block
@@ -80,8 +80,14 @@ continue
     : 'continue' ';'
     ;
 
-TYPE
-    : 'i8'
+type
+    : BUILTINTYPE   # BuiltinType
+    ;
+
+BUILTINTYPE
+    : 'void'
+    | 'bool'
+    | 'i8'
     | 'u8'
     | 'i16'
     | 'u16'
@@ -91,8 +97,6 @@ TYPE
     | 'u64'
     | 'f32'
     | 'f64'
-    | 'void'
-    | 'bool'
     ;
 
 ID

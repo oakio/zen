@@ -15,6 +15,8 @@ public class LLVMCodeGenerator : IAstVisitor
     private LLVMContextRef _context;
     private LLVMBuilderRef _builder;
     private readonly Stack<LLVMValueRef> _stack;
+    private readonly Stack<LLVMTypeRef> _typeEval;
+
     private readonly ScopeManager _scope;
     private readonly Dictionary<string, Entity> _functions;
 
@@ -27,6 +29,7 @@ public class LLVMCodeGenerator : IAstVisitor
         _context = LLVMContextRef.Global;
         _builder = LLVMBuilderRef.Create(_context);
         _stack = new Stack<LLVMValueRef>();
+        _typeEval = new Stack<LLVMTypeRef>();
         _scope = new ScopeManager();
         _functions = new Dictionary<string, Entity>();
     }
@@ -46,7 +49,7 @@ public class LLVMCodeGenerator : IAstVisitor
     public void Visit(VarDeclareNode node)
     {
         string id = node.Id;
-        LLVMTypeRef type = GetLLVMType(node.Type);
+        LLVMTypeRef type = EvalType(node.Type);
         LLVMValueRef variable = _builder.BuildAlloca(type, id);
         LLVMValueRef value = Eval(node.Value);
         _builder.BuildStore(value, variable);
@@ -73,9 +76,11 @@ public class LLVMCodeGenerator : IAstVisitor
             _scope.Add(funcParam.Name, valuePtr, type);
         }
 
-        LLVMValueRef returnValuePtr = node.ReturnType != "void"
-            ? _builder.BuildAlloca(returnType)
-            : default;
+        bool returnVoid = returnType == LLVMTypeRef.Void;
+
+        LLVMValueRef returnValuePtr = returnVoid
+            ? default
+            : _builder.BuildAlloca(returnType);
 
         LLVMBasicBlockRef bodyBlock = AppendBasicBlock(entryBlock, "body");
         _builder.BuildBr(bodyBlock);
@@ -83,7 +88,7 @@ public class LLVMCodeGenerator : IAstVisitor
         LLVMBasicBlockRef returnBlock = AppendBasicBlock(bodyBlock, "return");
         SetCurrentBlock(returnBlock);
 
-        if (node.ReturnType == "void")
+        if (returnVoid)
         {
             _builder.BuildRetVoid();
         }
@@ -341,7 +346,7 @@ public class LLVMCodeGenerator : IAstVisitor
 
     public void Visit(CastNode node)
     {
-        LLVMTypeRef targetType = GetLLVMType(node.Type);
+        LLVMTypeRef targetType = EvalType(node.Type);
         LLVMValueRef value = Eval(node.Value);
 
         if (targetType == value.TypeOf)
@@ -354,14 +359,20 @@ public class LLVMCodeGenerator : IAstVisitor
         _stack.Push(casted);
     }
 
+    public void Visit(BuiltinTypeNode node)
+    {
+        LLVMTypeRef type = GetLLVMType(node.Type);
+        _typeEval.Push(type);
+    }
+
     private void DeclareFunction(FuncDeclareNode node)
     {
-        LLVMTypeRef returnType = GetLLVMType(node.ReturnType);
+        LLVMTypeRef returnType = EvalType(node.ReturnType);
         ParamNode[] parameters = node.Parameters;
         LLVMTypeRef[] paramTypes = new LLVMTypeRef[parameters.Length];
         for (int i = 0; i < parameters.Length; i++)
         {
-            paramTypes[i] = GetLLVMType(parameters[i].Type);
+            paramTypes[i] = EvalType(parameters[i].Type);
         }
 
         LLVMTypeRef funcType = LLVMTypeRef.CreateFunction(returnType, paramTypes);
@@ -441,23 +452,22 @@ public class LLVMCodeGenerator : IAstVisitor
         return next;
     }
 
-    private LLVMTypeRef GetLLVMType(string type) =>
-        type switch
-        {
-            "void" => _context.VoidType,
-            "i8" => _context.Int8Type,
-            "u8" => _context.Int8Type,
-            "i16" => _context.Int16Type,
-            "u16" => _context.Int16Type,
-            "i32" => _context.Int32Type,
-            "u32" => _context.Int32Type,
-            "i64" => _context.Int64Type,
-            "u64" => _context.Int64Type,
-            "f32" => _context.FloatType,
-            "f64" => _context.DoubleType,
-            "bool" => _context.Int1Type,
-            _ => throw new NotSupportedException(type)
-        };
+    private LLVMTypeRef GetLLVMType(string type) => type switch
+    {
+        "void" => _context.VoidType,
+        "i8" => _context.Int8Type,
+        "u8" => _context.Int8Type,
+        "i16" => _context.Int16Type,
+        "u16" => _context.Int16Type,
+        "i32" => _context.Int32Type,
+        "u32" => _context.Int32Type,
+        "i64" => _context.Int64Type,
+        "u64" => _context.Int64Type,
+        "f32" => _context.FloatType,
+        "f64" => _context.DoubleType,
+        "bool" => _context.Int1Type,
+        _ => throw new NotSupportedException(type)
+    };
 
     private LLVMValueRef GetLLVMBinOp(BinaryOpType op, LLVMValueRef left, LLVMValueRef right) =>
         IsFloat(left)
@@ -520,6 +530,13 @@ public class LLVMCodeGenerator : IAstVisitor
         Accept(node);
         LLVMValueRef value = _stack.Pop();
         return value;
+    }
+
+    private LLVMTypeRef EvalType(ITypeNode node)
+    {
+        Accept(node);
+        LLVMTypeRef type = _typeEval.Pop();
+        return type;
     }
 
     private void AcceptAll(IEnumerable<IAstNode> nodes)

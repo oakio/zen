@@ -18,7 +18,7 @@ public class ZenVisitor : ZenBaseVisitor<IAstNode>
 
     public override IAstNode VisitVarDeclare(ZenParser.VarDeclareContext context)
     {
-        string type = AsType(context.TYPE());
+        ITypeNode type = AsType(context.type());
         string id = AsId(context.ID());
         ZenParser.ExpressionContext valueExpression = context.expression();
         IAstNode value = Visit(valueExpression);
@@ -28,7 +28,7 @@ public class ZenVisitor : ZenBaseVisitor<IAstNode>
     public override IAstNode VisitFuncDeclare(ZenParser.FuncDeclareContext context)
     {
         string id = AsId(context.ID());
-        string returnType = AsType(context.TYPE());
+        ITypeNode returnType = AsType(context.type());
         ParamNode[] parameters = context.param().Select(Visit).Cast<ParamNode>().ToArray();
         IAstNode body = context.block() != null
             ? Visit(context.block())
@@ -38,7 +38,7 @@ public class ZenVisitor : ZenBaseVisitor<IAstNode>
 
     public override IAstNode VisitParam(ZenParser.ParamContext context)
     {
-        string type = AsType(context.TYPE());
+        ITypeNode type = AsType(context.type());
         string id = AsId(context.ID());
         return new ParamNode(type, id);
     }
@@ -182,9 +182,15 @@ public class ZenVisitor : ZenBaseVisitor<IAstNode>
 
     public override IAstNode VisitCasting(ZenParser.CastingContext context)
     {
-        string type = AsType(context.TYPE());
+        ITypeNode type = AsType(context.type());
         IAstNode value = Visit(context.expression());
         return new CastNode(type, value);
+    }
+
+    public override IAstNode VisitBuiltinType(ZenParser.BuiltinTypeContext context)
+    {
+        string type = context.GetText();
+        return new BuiltinTypeNode(type);
     }
 
     private static BinaryOpType ParseBinaryOpType(string type) =>
@@ -216,5 +222,5 @@ public class ZenVisitor : ZenBaseVisitor<IAstNode>
 
     private static string AsId(ITerminalNode node) => node.GetText();
 
-    private static string AsType(ITerminalNode node) => node.GetText();
+    private ITypeNode AsType(ZenParser.TypeContext node) => (ITypeNode)Visit(node);
 }

@@ -22,6 +22,7 @@ public class AstPrinter : IAstVisitor
     {
         Print(node);
         Begin();
+        node.Type.Accept(this);
         node.Value.Accept(this);
         End();
     }
@@ -30,12 +31,19 @@ public class AstPrinter : IAstVisitor
     {
         Print(node);
         Begin();
+        node.ReturnType.Accept(this);
         AcceptAll(node.Parameters);
         node.Body?.Accept(this);
         End();
     }
 
-    public void Visit(ParamNode node) => Print(node);
+    public void Visit(ParamNode node)
+    {
+        Print(node);
+        Begin();
+        node.Type.Accept(this);
+        End();
+    }
 
     public void Visit(ReturnNode node)
     {
@@ -133,9 +141,12 @@ public class AstPrinter : IAstVisitor
     {
         Print(node);
         Begin();
+        node.Type.Accept(this);
         node.Value.Accept(this);
         End();
     }
+
+    public void Visit(BuiltinTypeNode node) => Print(node);
 
     private void Print(IAstNode node)
     {

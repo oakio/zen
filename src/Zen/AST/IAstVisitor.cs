@@ -25,4 +25,5 @@ public interface IAstVisitor
     void Visit(BreakNode node);
     void Visit(ContinueNode node);
     void Visit(CastNode node);
+    void Visit(BuiltinTypeNode node);
 }

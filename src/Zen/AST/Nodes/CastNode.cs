@@ -2,10 +2,10 @@ namespace Zen.AST.Nodes;
 
 public class CastNode : IAstNode
 {
-    public readonly string Type;
+    public readonly ITypeNode Type;
     public readonly IAstNode Value;
 
-    public CastNode(string type, IAstNode value)
+    public CastNode(ITypeNode type, IAstNode value)
     {
         Type = type;
         Value = value;

@@ -2,10 +2,10 @@ namespace Zen.AST.Nodes;
 
 public class ParamNode : IAstNode
 {
-    public readonly string Type;
+    public readonly ITypeNode Type;
     public readonly string Id;
 
-    public ParamNode(string type, string id)
+    public ParamNode(ITypeNode type, string id)
     {
         Type = type;
         Id = id;

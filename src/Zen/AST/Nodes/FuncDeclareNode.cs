@@ -3,11 +3,11 @@ namespace Zen.AST.Nodes;
 public class FuncDeclareNode : IAstNode
 {
     public readonly string Id;
-    public readonly string ReturnType;
+    public readonly ITypeNode ReturnType;
     public readonly ParamNode[] Parameters;
     public readonly IAstNode Body;
 
-    public FuncDeclareNode(string id, string returnType, ParamNode[] parameters, IAstNode body)
+    public FuncDeclareNode(string id, ITypeNode returnType, ParamNode[] parameters, IAstNode body)
     {
         Id = id;
         ReturnType = returnType;
