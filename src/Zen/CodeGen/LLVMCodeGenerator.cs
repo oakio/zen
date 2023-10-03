@@ -193,8 +193,8 @@ public class LLVMCodeGenerator : IAstVisitor
             case UnaryOpType.Neg:
             {
                 LLVMValueRef negValue = IsFloat(value)
-                    ? LLVMValueRef.CreateConstFNeg(value)
-                    : LLVMValueRef.CreateConstNSWNeg(value);
+                    ? _builder.BuildFNeg(value)
+                    : _builder.BuildNSWNeg(value);
 
                 _stack.Push(negValue);
                 return;
