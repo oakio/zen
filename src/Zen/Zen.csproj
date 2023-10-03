@@ -22,7 +22,7 @@
     </PackageReference>
     <PackageReference Include="Antlr4.Runtime" Version="4.6.6" />
     <PackageReference Include="Codestellation.Cepheid" Version="0.1.6" PrivateAssets="All" />
-    <PackageReference Include="LLVMSharp" Version="15.0.0-beta1" />
+    <PackageReference Include="LLVMSharp" Version="16.0.0" />
   </ItemGroup>
 
   <ItemGroup>
